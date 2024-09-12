@@ -1,36 +1,38 @@
- ; Test list  ---- (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil))))))
+ ; Define Nil as an empty list and | as a list constructor
 (: Nil (List $t))
-(: list (-> $t (List $t) (List $t)))
-(: head (->  (List $t) $t))
-(= (head (list $head $tail)) $head)
-(: tail (->  (List $t) (List $t))) ; Type Definition
-(= (tail (list $head $tail)) $tail)
+(: | (-> $t (List $t) (List $t)))
 
- ;;;;;;;;;;; Length
+ ; Retrieve the head of a list
+(: head (-> (List $t) $t))
+(= (head (| $head $tail)) $head)
+
+ ; Retrieve the tail of a list
+(: tail (-> (List $t) (List $t))) ; Type Definition
+(= (tail (| $head $tail)) $tail)
+
+ ; Calculate the length of a list
 (: length (-> (List $t) Number)) ; Type definition
-(= (length (list $head $tail))
+(= (length (| $head $tail))
     (if (== $tail Nil)
         1
         (+ 1 (length $tail))
     )
 )
-! (length (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil))))))) ; [6]
+! (length (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) ; [6]
 
- ;;;;;;;;;;; Pop List
-
-(: pop (->  (List $t) $t))
-(= (pop (list $head $tail))
+ ; Pop the last element from a list
+(: pop (-> (List $t) $t))
+(= (pop (| $head $tail))
     (if (== $tail Nil)
         $head
         (pop $tail)
     )
 )
-! (pop (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil)))))))
+! (pop (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
- ;;;;;;;;;;; Is Member List
-
+ ; Check if an element is a member of the list
 (: is-member (-> $t (List $t) Bool))
-(= (is-member $n (list $head $tail))
+(= (is-member $n (| $head $tail))
     (case ($head $tail)
         ( ( ($_ Nil) (== $head $n))
             ( ($head $tail)
@@ -41,23 +43,21 @@
         ))
 )
 )
-! (is-member 45 (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil)))))))
+! (is-member 2 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
- ;;;;;;;;;;; Remove Element
-
-(: remove-element (->  $t (List $t) (List $t)))
-(= (remove-element $rm (list $head $tail))
+ ; Remove all occurrences of an element from the list
+(: remove-element (-> $t (List $t) (List $t)))
+(= (remove-element $rm (| $head $tail))
     (if (== $rm $head)
         $tail
-        (list $head (remove-element $rm $tail))
+        (| $head (remove-element $rm $tail))
     )
 )
- ; ! (remove-element 3 (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil)))))))
+! (remove-element 3 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
- ;;;;;;;;;;; Min FUNCTION
-
+ ; Find the minimum element in a list based on a comparison function
 (: min (-> $t (List $t) $t))
-(= (min $t (list $head $tail))
+(= (min $t (| $head $tail))
     (case ($t $tail)
         (
             ( ($t Nil) $t)
@@ -69,13 +69,12 @@
     )
 )
 )
-! (min (head (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil))))))) (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil)))))))
+! (min (head (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
  ;; OUTPUT :
 
- ;;;;;;;;;;; Max FUNCTION
-
+ ; Find the maximum element in a list based on a comparison function
 (: max (-> $t (List $t) $t))
-(= (max $t (list $head $tail))
+(= (max $t (| $head $tail))
     (case ($t $tail)
         (
             ( ($t Nil) $t)
@@ -87,54 +86,60 @@
     )
 )
 )
-! (max (head (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil))))))) (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil)))))))
+! (max (head (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
- ;;;;;;;;;;; Append List
-
-(: append (->  $t (List $t) (List $t)))
-(= (append $t (list $head $tail))
-    ( if (== $tail Nil)
-        (list $head (list $t Nil))
-        (list $head (append $t $tail)))
+ ; Append an element to the end of a list
+(: append (-> $t (List $t) (List $t)))
+(= (append $t (| $head $tail))
+    (if (== $tail Nil)
+        (| $head (| $t Nil))
+        (| $head (append $t $tail)))
 )
-! (append 3 (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil)))))))
+! (append 3 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
- ;;;;;;;;;;; Map
-
+ ; Apply a function to each element of the list (map)
 (: times-two (-> $t $t))
 (= (times-two $t) (* 2 $t))
 (: (: map (-> (-> $t $t) Expression Expression)))
-(= (map $f (list $head $tail))
+(= (map $f (| $head $tail))
     (if (== $tail Nil)
-        (list ($f $head) Nil)
-        (list ($f $head) (map $f $tail))
+        (| ($f $head) Nil)
+        (| ($f $head) (map $f $tail))
     )
 )
- ; ! (map times-two (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil)))))))
+ ; ! (map times-two (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
- ;;;;;;;;;;; Reverse List
-
+ ; Reverse the order of elements in a list
 (: reverse (-> (List $t) (List $t)))
-(= (reverse (list $head $tail))
+(= (reverse (| $head $tail))
     (if (== $tail Nil)
-        (list $head Nil)
+        (| $head Nil)
         (append $head (reverse $tail))
     )
 )
-! (reverse (list 6 (list 5 (list 4 (list 3 (list 2 (list 1 Nil)))))))
+! (reverse (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
- ;;;;;;;;;;; Remove duplicate
-
-(: remove-duplicate (->  (List $t) (List $t)))
-(= (remove-duplicate (list $head $tail))
+ ; Remove duplicate elements from the list
+(: remove-duplicate (-> (List $t) (List $t)))
+(= (remove-duplicate (| $head $tail))
     (if (== $tail Nil)
-        (list $head Nil)
+        (| $head Nil)
         (if (is-member $head $tail)
             (remove-duplicate $tail)
-            (list $head (remove-duplicate $tail))
+            (| $head (remove-duplicate $tail))
         )
 )
 )
-! (remove-duplicate (list 6 (list 5 (list 4 (list 3 ( list 5 (list 2 (list 5 (list 1 Nil)))))))))
+! (remove-duplicate (| 6 (| 5 (| 4 (| 3 ( | 5 (| 2 (| 5 (| 1 Nil)))))))))
 
- ;TODO:sort and maybe foldr foldl and stuff
+ ; Sort list
+(= (sort ()) ())
+(= (sort (| $head $tail))
+    (place $head (sort $tail)))
+(= (place $val ()) (| $val ()))
+(= (place $val (| $head $tail))
+    (if (> $val $head)
+        (| $head (place $val $tail))
+        (| $val (| $head $tail))))
+
+ ; ! (sort (| 4 (| 8 (| 3 (| 5 (| 1 (| 6 (| 5 (| 2 (| 9 ()))))))))))
