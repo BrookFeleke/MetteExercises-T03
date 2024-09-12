@@ -6,7 +6,6 @@
 (Parent Chandler Pam)
 (Parent Chandler Adam)
 (Parent Chandler Jane)
-
 (Sibling Adam Jane)
 (Sibling Pam Adam )
 (Sibling John Adam)
@@ -30,6 +29,7 @@
 (Male Joey)
 (Male Tim)
 (Male Bob)
+
 (= (get_parents $x)
     (match &self (Parent $y $x) $y)
 )
@@ -60,13 +60,7 @@ $y
     )
 $y
 )
- ; Predecessors of Bob
- ; ! (match &self (,
- ;         (Parent $x Bob)
- ;         (Parent $y $x)
- ;     )
- ; ($x $y)
- ; )
+ ;; Predecessors of BOB
 (= (parent $x $y) (match &self (Parent $x $y) $x))
 (= (predecessor $x $z) (parent $x $z))
 (= (predecessor $x $z) (predecessor $x (parent $y $z)))
