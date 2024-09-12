@@ -18,7 +18,7 @@
         (+ 1 (length $tail))
     )
 )
-! (length (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) ; [6]
+ ; ! (length (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) ; [6]
 
  ; Pop the last element from a list
 (: pop (-> (List $t) $t))
@@ -43,7 +43,7 @@
         ))
 )
 )
-! (is-member 2 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
+ ; ! (is-member 2 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
  ; Remove all occurrences of an element from the list
 (: remove-element (-> $t (List $t) (List $t)))
@@ -53,7 +53,7 @@
         (| $head (remove-element $rm $tail))
     )
 )
-! (remove-element 3 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
+ ; ! (remove-element 3 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
  ; Find the minimum element in a list based on a comparison function
 (: min (-> $t (List $t) $t))
@@ -69,7 +69,7 @@
     )
 )
 )
-! (min (head (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
+ ; ! (min (head (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
  ;; OUTPUT :
 
  ; Find the maximum element in a list based on a comparison function
@@ -86,7 +86,7 @@
     )
 )
 )
-! (max (head (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
+ ; ! (max (head (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil))))))) (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
  ; Append an element to the end of a list
 (: append (-> $t (List $t) (List $t)))
@@ -95,7 +95,7 @@
         (| $head (| $t Nil))
         (| $head (append $t $tail)))
 )
-! (append 3 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
+ ; ! (append 3 (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
  ; Apply a function to each element of the list (map)
 (: times-two (-> $t $t))
@@ -117,7 +117,7 @@
         (append $head (reverse $tail))
     )
 )
-! (reverse (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
+ ; ! (reverse (| 6 (| 5 (| 4 (| 3 (| 2 (| 1 Nil)))))))
 
  ; Remove duplicate elements from the list
 (: remove-duplicate (-> (List $t) (List $t)))
@@ -130,7 +130,7 @@
         )
 )
 )
-! (remove-duplicate (| 6 (| 5 (| 4 (| 3 ( | 5 (| 2 (| 5 (| 1 Nil)))))))))
+ ; ! (remove-duplicate (| 6 (| 5 (| 4 (| 3 ( | 5 (| 2 (| 5 (| 1 Nil)))))))))
 
  ; Sort list
 (= (sort ()) ())
@@ -143,3 +143,16 @@
         (| $val (| $head $tail))))
 
  ; ! (sort (| 4 (| 8 (| 3 (| 5 (| 1 (| 6 (| 5 (| 2 (| 9 ()))))))))))
+
+(= (foldl $f $acc ()) $acc)
+(= (foldl $f $acc (| $head $tail))
+    (foldl $f ($f $acc $head) $tail))
+
+(= (foldr $f $acc ()) $acc)
+(= (foldr $f $acc (| $head $tail))
+    ($f $head (foldr $f $acc $tail)))
+
+ ; Example
+ ; (= (div $a $b) (/ $a $b))
+ ; ! (foldr div 1 (| 1 (| 2 (| 3 ())))) ;
+ ; ! (foldl div 1 (| 1 (| 2 (| 3 ())))) ;
