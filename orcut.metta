@@ -32,10 +32,6 @@
 (: KEEP ReductionSignal)
 (: NONE ReductionSignal)
 (: ADVANCE IterationSignal)
- ; (OR A B (AND C D (OR E F G)))
- ;(AND (OR C D (NOT B)) (NOT A))
-
- ;(AND (OR C (NOT D)) (NOT B) A)
 
  ;; Test 20
 (= (concatTuple $xs $ys)
@@ -48,25 +44,7 @@
         )
 )
 )
- ; (= (orCut $expresion)
- ;     (if (== $expresion ()) ()
- ;         (let* (
- ;                 ($head (car-atom $expresion))
- ;                 ($tail (cdr-atom $expresion))
- ;             ) (if (== $head OR)
- ;             (let* (
- ;                     ($subhead (car-atom $tail))
- ;                     ($subtail (cdr-atom $tail))
- ;                 ) (if (== $subtail ())
- ;                 $tail
- ;                 (conca   tTuple (concatTuple ($head) ($subhead)) (orCut $subtail))
- ;             )
- ;     )
- ; (concatTuple ($head) $tail)
- ; )
- ; )
- ; )
- ; )
+
 (= (orCut $expresion)
     (if (== $expresion ()) ()
         (let* (
@@ -100,32 +78,9 @@
 ! (orCut (OR B C (OR X B)))
 ! (orCut (OR A (OR B))) ; (OR A B)
 ! (orCut (OR (AND A B))) ; (AND A B)
- ; ( = (orCut $expression)
- ;     (if (== $expresion ()) ()
- ;         (let* (
- ;                 ($head (car-atom $expresion))
- ;                 ($tail (cdr-atom $expresion))
- ;             ) (if (== (get-type $head) Expression)
- ;             ($head)
- ;             (
- ;                 $tail
- ;             )
- ;     )
- ; )
- ; )
- ; )
+
  ;(AND (NOT A) B (OR C (NOT D) (AND E F (NOT G))))
  ; ! (cdr-atom (A))
-
- ; (concatTuple ($head) $tail)
-
- ; ! (get-type A)
- ; ! (get-metatype A)
- ; ! (get-type OR)
- ; ! (get-metatype OR)
- ; ! (get-type (OR A B))
- ; ! (get-metatype (OR A B))
-! (== (get-metatype (OR A B)) Expression)
 
  ;; Test 1: OR with nested OR (multiple children, no orCut)
  ; ! (orCut (OR B (OR X B))) ; (OR B (OR X B))
